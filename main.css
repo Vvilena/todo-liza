@@ -1,0 +1,264 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Righteous&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    height: 750px;
+    width: 1510px;
+    margin: 0 auto;
+}
+
+.title {
+    text-align: center;
+}
+
+
+.controls {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.search-container {
+    position: relative;
+    width: 450px;
+}
+
+.search-input {
+    color: #C3C1E5;
+    font-size: 16px;
+    width: 420px;
+    height: 29px;
+    border: 1px solid #6c63ff;
+    padding: 6px;
+     border-radius: 5px;
+    
+}
+
+.search-icon {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.filter-select {
+    background-color: #6c63ff;
+    border: none;
+    height: 40px;
+    width: 85px;
+     border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: Open Sans;
+    padding: 5px 4px 5px 10px; /* Паддинги теперь работают! */
+    border: 1px solid #ccc;
+    appearance: none; /* Убираем дефолтную стрелку */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+.custom-arrow {
+    z-index: 3;
+    color: #ccc;
+    position: absolute;
+    right: 5px; /* Позиционируем относительно правого края */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Чтобы клики проходили сквозь на селект */
+    color: #666;
+    width: 20px;
+    height: 20px;
+}
+.custom-select-wrapper{
+     position: relative;
+    display: inline-block;
+    width: 85px;
+   
+}
+.select-wrapper::after {
+    content: "▼";
+    position: absolute;
+    right: 12px; /* Позиция кастомной стрелки */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 12px;
+    color: #666;
+}
+.sun-Icon {
+    display: none;
+}
+
+.theme-button {
+    width: 40px;
+    height: 40px;
+    background-color: #6c63ff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+
+.note {
+    display: flex;
+    gap: 10px;
+    text-align: center;
+    margin-left: 525px;
+    margin-top: 30px;
+}
+
+
+
+.note-text {
+    font-weight: 700;
+    font-size: 18px;
+    margin: 0;
+}
+
+.note-icon {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.edit-icon {
+    margin-left: 320px;
+}
+
+.separator {
+    color: #6c63ff;
+    text-align: center;
+    margin-top: -15px;
+}
+
+.add-button {
+    background-color: #6c63ff;
+    border-radius: 50px;
+    border: none;
+    text-align: center;
+    justify-content: center;
+    margin-left: 750px;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    margin-top: 400px;
+    margin-left: 1000px;
+}
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    padding-top: 18px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 18px;
+    width: 500px;
+    margin: 15% auto;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    height: 289px;
+}
+
+.modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.modal-content input {
+    width: 440px;
+    height: 38px;
+    border: 1px solid #cfcfff;
+    border-radius: 6px;
+    outline: none;
+    padding: 5px 10px 5px 10px;
+    color: #C3C1E5;
+    font-size: 16px;
+}
+
+.button-group {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel,
+.apply {
+    width: 25%;
+    padding: 10px;
+    margin-top: 80px;
+    border-radius: 8px;
+    border: 1px solid #7b5dfc;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.cancel {
+    background: white;
+    color: #7b5dfc;
+}
+
+.apply {
+    background: #7b5dfc;
+    color: white;
+    margin-left: 0px;
+}
+
+.dark-theme {
+    background-color: #121212;
+    color: #f5f5f5;
+}
+
+.dark-theme .modal-content {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+.dark-theme .note-text {
+    color: #f5f5f5;
+}
+
+.dark-theme .search-input {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: 1px solid #7b5dfc;
+}
+
+.dark-theme .filter-select,
+.dark-theme .theme-button,
+.dark-theme .add-button {
+    background-color: #7b5dfc;
+    color: #fff;
+}
+
+.dark-theme .cancel {
+    background: #1e1e1e;
+    color: #7b5dfc;
+    border-color: #7b5dfc;
+}
+
+.dark-theme .apply {
+    background: #7b5dfc;
+    color: #fff;
+}
