@@ -135,6 +135,11 @@ body {
     margin: 0;
 }
 
+.note-text.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
 .note-icon {
     margin-left: 10px;
     cursor: pointer;
@@ -255,6 +260,11 @@ body {
 
 .dark-theme .note-text {
     color: #f5f5f5;
+}
+
+.dark-theme .note-text.completed {
+    color: #888;
+    opacity: 0.5;
 }
 
 .dark-theme .search-input {

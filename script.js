@@ -158,7 +158,7 @@ function renderTodoList() {
             <div class="note-item" data-id="${originalIdx}">
                 <div class="note">
                     <input type="checkbox" class="note-checkbox" ${isCompleted ? 'checked' : ''}>
-                    <p class="note-text" style="${isCompleted ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${todo.text}</p>
+                    <p class="note-text ${isCompleted ? 'completed' : ''}">${todo.text}</p>
                     <svg class="note-icon edit-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path
