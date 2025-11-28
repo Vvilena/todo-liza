@@ -55,10 +55,18 @@ themeButton.onclick = () => {
 
 
 let todoList = [];
+let statusFilter = ""; // "all", "completed", "active"
 
 // Обработчик поиска
 searchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value.toLowerCase().trim();
+    renderTodoList();
+});
+
+// Обработчик фильтрации по статусу
+const filterSelect = document.querySelector(".filter-select");
+filterSelect.addEventListener('change', (e) => {
+    statusFilter = e.target.value;
     renderTodoList();
 });
 
@@ -67,11 +75,11 @@ addNoteBtn.addEventListener('click', () => {
     if (todo) {
         if (editingIndex !== null) {
             // Редактирование существующей заметки
-            todoList[editingIndex] = todo;
+            todoList[editingIndex].text = todo;
             editingIndex = null;
         } else {
             // Добавление новой заметки
-            todoList.push(todo);
+            todoList.push({ text: todo, completed: false });
         }
         todoInput.value = '';
         modal.style.display = "none";
@@ -81,6 +89,13 @@ addNoteBtn.addEventListener('click', () => {
 
 // Обработчик кликов на контейнере заметок
 notesContainer.addEventListener('click', (event) => {
+    // Проверяем клик на чекбокс
+    if (event.target.classList.contains('note-checkbox')) {
+        const noteElement = event.target.closest('.note-item');
+        const todoId = parseInt(noteElement.dataset.id);
+        toggleTodoStatus(todoId);
+    }
+    
     // Проверяем клик на иконку удаления
     if (event.target.closest('.delete-icon')) {
         const noteElement = event.target.closest('.note-item');
@@ -97,11 +112,18 @@ notesContainer.addEventListener('click', (event) => {
 });
 
 function renderTodoList() {
-    // Фильтруем заметки по поисковому запросу
+    // Фильтруем заметки по статусу
     let filteredTodos = todoList;
+    if (statusFilter === "completed") {
+        filteredTodos = todoList.filter(todo => todo.completed);
+    } else if (statusFilter === "active") {
+        filteredTodos = todoList.filter(todo => !todo.completed);
+    }
+    
+    // Фильтруем по поисковому запросу
     if (searchQuery) {
-        filteredTodos = todoList.filter(todo => 
-            todo.toLowerCase().includes(searchQuery)
+        filteredTodos = filteredTodos.filter(todo => 
+            todo.text.toLowerCase().includes(searchQuery)
         );
     }
     
@@ -112,19 +134,31 @@ function renderTodoList() {
     
     // Создаем маппинг оригинальных индексов к отфильтрованным
     const indexMap = [];
+    let tempFiltered = todoList;
+    if (statusFilter === "completed") {
+        tempFiltered = todoList.filter(todo => todo.completed);
+    } else if (statusFilter === "active") {
+        tempFiltered = todoList.filter(todo => !todo.completed);
+    }
+    
     todoList.forEach((todo, idx) => {
-        if (!searchQuery || todo.toLowerCase().includes(searchQuery)) {
+        let matchesStatus = true;
+        if (statusFilter === "completed" && !todo.completed) matchesStatus = false;
+        if (statusFilter === "active" && todo.completed) matchesStatus = false;
+        
+        if (matchesStatus && (!searchQuery || todo.text.toLowerCase().includes(searchQuery))) {
             indexMap.push(idx);
         }
     });
     
     notesContainer.innerHTML = filteredTodos.map((todo, filteredIndex) => {
         const originalIdx = indexMap[filteredIndex];
+        const isCompleted = todo.completed;
         return `
             <div class="note-item" data-id="${originalIdx}">
                 <div class="note">
-                    <input type="checkbox" class="note-checkbox">
-                    <p class="note-text">${todo}</p>
+                    <input type="checkbox" class="note-checkbox" ${isCompleted ? 'checked' : ''}>
+                    <p class="note-text" style="${isCompleted ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${todo.text}</p>
                     <svg class="note-icon edit-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -152,16 +186,25 @@ function renderTodoList() {
     }).join("");
 }
 
+function toggleTodoStatus(id) {
+    if (id >= 0 && id < todoList.length) {
+        todoList[id].completed = !todoList[id].completed;
+        renderTodoList();
+    }
+}
+
 function removeTodo(id) {
-    todoList = todoList.filter((todo, index) => index !== id);
-    renderTodoList();
+    if (id >= 0 && id < todoList.length) {
+        todoList = todoList.filter((todo, index) => index !== id);
+        renderTodoList();
+    }
 }
 
 function editTodo(id) {
     if (id >= 0 && id < todoList.length) {
         editingIndex = id;
         modalTitle.textContent = "EDIT NOTE";
-        todoInput.value = todoList[id];
+        todoInput.value = todoList[id].text;
         modal.style.display = "block";
     }
 }
