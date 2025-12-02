@@ -10,23 +10,34 @@ const searchInput = document.querySelector(".search-input");
 let editingIndex = null;
 let searchQuery = "";
 
+//при клике добавляем событие которое произойдет
 openModal.onclick = () => {
+//обнуляем поле для ввода
     editingIndex = null;
+//изменяем титульнинк на новая заметка
     modalTitle.textContent = "NEW NOTE";
-    todoInput.value = "";
+//очищает поле для ввода
+    todoInput.value = ""
+//делает модлаьное окно видимым
     modal.style.display = "block";
 };
 
+//при закрытии окна 
 closeModal.onclick = () => {
+// модальное окно скрывается
     modal.style.display = "none";
     editingIndex = null;
     todoInput.value = "";
 };
 
 window.onclick = (e) => {
+    //вешаем событие если нажатие было по фону то наш код выполняется
     if (e.target === modal) {
+    //модальное окно скрывавется
         modal.style.display = "none";
+    //обнуляется переменная которая хранит в себе инлес заметки которая изменяется
         editingIndex = null;
+    //обнуляем поле для ввода
         todoInput.value = "";
     }
 };
@@ -37,6 +48,7 @@ const sunIcon = themeButton.querySelector(".sun-Icon");
 
 
 function updateIcons() {
+//есть ли у станицы класс дарктим
     if (document.body.classList.contains("dark-theme")) {
         moonIcon.style.display = "none";
         sunIcon.style.display = "block";
@@ -47,63 +59,86 @@ function updateIcons() {
 }
 
 // Обработчик клика
+//добавляем действие при клике на кнопку переключения темы
 themeButton.onclick = () => {
+//переключает на класс дарк тим и теперь приенятся стили дарк
     document.body.classList.toggle("dark-theme");
+//вызов функции обоновления иконок
     updateIcons(); 
 }
 
 
-
+//массив для хранения тудушек
 let todoList = [];
+//статус стоит по дефолту пустой нужен для сортировки
 let statusFilter = ""; // "all", "completed", "active"
 
 // Обработчик поиска
+//слушатель события есть наше событие будет выполняется при любом изменении текста
 searchInput.addEventListener('input', (e) => {
+//элемент на котором произошло событие и берем текущее значение поле преобрзуем
+// в нижний регимтр и убирае пробелы сзади и спереди
     searchQuery = e.target.value.toLowerCase().trim();
+//сохраняем для ипользования в функции
     renderTodoList();
 });
 
 // Обработчик фильтрации по статусу
+//находим элементы фильтра и это селект
 const filterSelect = document.querySelector(".filter-select");
+//вешаем событие и оно происходит при изменении выбора в селект 
 filterSelect.addEventListener('change', (e) => {
+//получаем выбранное значение
     statusFilter = e.target.value;
+//вызываем функцию перирисовки котораая будет показывать новый список в соответствии со значением в статусе
     renderTodoList();
 });
 
+//вешаем событие на кнопку добавить заметку и оно произойдет когда мы кликнем на кнопку
 addNoteBtn.addEventListener('click', () => {
+//создаем постоянную переменную для хранения туду и получаем текст из поля для ввода
     const todo = todoInput.value.trim();
+    //если текст есть
     if (todo) {
+        //если редачим новую
         if (editingIndex !== null) {
-            // Редактирование существующей заметки
+        //по индексу находим нашу выбранную туду, выбираем оттуда текст и присваиваем новое значение
             todoList[editingIndex].text = todo;
+        //обнуляем счетчик индексов для туду
             editingIndex = null;
         } else {
-            // Добавление новой заметки
+        //добавление новой заметки
             todoList.push({ text: todo, completed: false });
         }
+        //очищаем поле
         todoInput.value = '';
+        //закрываем окно
         modal.style.display = "none";
+        //перерисовываем список
         renderTodoList();
     }
 });
 
-// Обработчик кликов на контейнере заметок
+// ловим клик на поле где хранятся тудушки и просиходит событие
 notesContainer.addEventListener('click', (event) => {
-    // Проверяем клик на чекбокс
+    // берем конкретный элемент на который кликнули и содержит ли он класс чекбокс
     if (event.target.classList.contains('note-checkbox')) {
+        //находим родителя с таким же классом чтобы получить всю замету  не только чекбокс
         const noteElement = event.target.closest('.note-item');
+        //получаем айди задачи 
         const todoId = parseInt(noteElement.dataset.id);
+        //вызываем функцию переключения статуса
         toggleTodoStatus(todoId);
     }
     
-    // Проверяем клик на иконку удаления
+    // проверяем клик на иконку удаления
     if (event.target.closest('.delete-icon')) {
         const noteElement = event.target.closest('.note-item');
         const todoId = parseInt(noteElement.dataset.id);
         removeTodo(todoId);
     }
     
-    // Проверяем клик на иконку редактирования
+    // проверяем клик на иконку редактирования
     if (event.target.closest('.edit-icon')) {
         const noteElement = event.target.closest('.note-item');
         const todoId = parseInt(noteElement.dataset.id);
@@ -112,22 +147,29 @@ notesContainer.addEventListener('click', (event) => {
 });
 
 function renderTodoList() {
-    // Фильтруем заметки по статусу
+    // фильтруем заметки по статусу
+    //присваиваем сначала все что есть
     let filteredTodos = todoList;
+    //если выполенены
     if (statusFilter === "completed") {
+        //проходит по тудулист и оставляет только те где туду_законч=тру
         filteredTodos = todoList.filter(todo => todo.completed);
+        //если не выполнены
     } else if (statusFilter === "active") {
+         //проходит по тудулист и оставляет только те где туду_законч=фолс
         filteredTodos = todoList.filter(todo => !todo.completed);
     }
-    
     // Фильтруем по поисковому запросу
+    // если есть поисковой запрос
     if (searchQuery) {
+        //проходимсяпо новому отфильтрваному туду по каждому элементу провяем совпадает ли условие если да то осотавляет те которые подходят
         filteredTodos = filteredTodos.filter(todo => 
             todo.text.toLowerCase().includes(searchQuery)
         );
     }
-    
+    //если задач ноль
     if (filteredTodos.length === 0) {
+        //то очищает контейнер
         notesContainer.innerHTML = '';
         return;
     }
