@@ -73,6 +73,42 @@ let todoList = [];
 //статус стоит по дефолту пустой нужен для сортировки
 let statusFilter = ""; // "all", "completed", "active"
 
+// Функция для загрузки задач с сервера
+async function loadTasks() {
+    try {
+        const response = await fetch('getTasks.php');
+        const tasks = await response.json();
+        if (Array.isArray(tasks)) {
+            todoList = tasks;
+            renderTodoList();
+        }
+    } catch (error) {
+        console.error('Ошибка при загрузке задач:', error);
+    }
+}
+
+// Функция для сохранения задач на сервер
+async function saveTasks() {
+    try {
+        const response = await fetch('saveTasks.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(todoList)
+        });
+        const result = await response.json();
+        if (!result.success) {
+            console.error('Ошибка при сохранении задач:', result.error);
+        }
+    } catch (error) {
+        console.error('Ошибка при сохранении задач:', error);
+    }
+}
+
+// Загружаем задачи при загрузке страницы
+loadTasks();
+
 // Обработчик поиска
 //слушатель события есть наше событие будет выполняется при любом изменении текста
 searchInput.addEventListener('input', (e) => {
@@ -95,7 +131,7 @@ filterSelect.addEventListener('change', (e) => {
 });
 
 //вешаем событие на кнопку добавить заметку и оно произойдет когда мы кликнем на кнопку
-addNoteBtn.addEventListener('click', () => {
+addNoteBtn.addEventListener('click', async () => {
 //создаем постоянную переменную для хранения туду и получаем текст из поля для ввода
     const todo = todoInput.value.trim();
     //если текст есть
@@ -116,6 +152,8 @@ addNoteBtn.addEventListener('click', () => {
         modal.style.display = "none";
         //перерисовываем список
         renderTodoList();
+        //сохраняем задачи на сервер
+        await saveTasks();
     }
 });
 
@@ -228,17 +266,21 @@ function renderTodoList() {
     }).join("");
 }
 
-function toggleTodoStatus(id) {
+async function toggleTodoStatus(id) {
     if (id >= 0 && id < todoList.length) {
         todoList[id].completed = !todoList[id].completed;
         renderTodoList();
+        //сохраняем задачи на сервер
+        await saveTasks();
     }
 }
 
-function removeTodo(id) {
+async function removeTodo(id) {
     if (id >= 0 && id < todoList.length) {
         todoList = todoList.filter((todo, index) => index !== id);
         renderTodoList();
+        //сохраняем задачи на сервер
+        await saveTasks();
     }
 }
 

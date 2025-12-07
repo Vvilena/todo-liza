@@ -76,6 +76,24 @@
         </div>
          
         <script src="script.js"></script>
+        <script>
+            document.getElementById("btn").addEventListener("click", () => {
+              let task_text_v = document.getElementById("task_input").value;
+              let form_date_obj = new FormData();
+              form_date_obj.append("task_title",task_text_v);
+              
+              fetch("server/test.php", {
+                method: "post",
+                body: JSON.stringify({
+                  task_text: task_text_v,
+                }),
+              })
+                .then((response) => response.text())
+                .then((resp) => {
+                  console.log(resp);
+                });
+            });
+          </script>
 </body>
 
 </html>
